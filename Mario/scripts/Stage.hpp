@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Mario.hpp"
 
@@ -23,25 +23,25 @@ public:
 
     int pixelSize;
 
-    // ƒ}ƒbƒvî•ñ‚ª‹l‚Ü‚Á‚½A2ŸŒ³”z—ñ
+    // ãƒãƒƒãƒ—æƒ…å ±ãŒè©°ã¾ã£ãŸã€2æ¬¡å…ƒé…åˆ—
     std::vector<std::vector<MapType>> map;
 
     int groundTex;
 
     Mario mario;
 
-    // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+    // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     Stage(int pixelSize) : pixelSize(pixelSize), groundTex(-1), mario(pixelSize) {
     }
 
-    // csv“Ç‚İ‚İˆ—
+    // csvèª­ã¿è¾¼ã¿å‡¦ç†
     std::vector<std::vector<std::string>> readCSV(const std::string& filename) {
         std::vector<std::vector<std::string>> records;
         std::ifstream file(filename);
         std::string line;
 
         if (!file) {
-            std::cerr << "ƒtƒ@ƒCƒ‹‚ğŠJ‚¯‚Ü‚¹‚ñ‚Å‚µ‚½: " << filename << std::endl;
+            std::cerr << "ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã‘ã¾ã›ã‚“ã§ã—ãŸ: " << filename << std::endl;
             return records;
         }
 
@@ -50,7 +50,7 @@ public:
             std::vector<std::string> row;
             std::string value;
 
-            // s‚Ì‚·‚×‚Ä‚ÌƒJƒ“ƒ}‹æØ‚èƒf[ƒ^‚ğæ“¾
+            // è¡Œã®ã™ã¹ã¦ã®ã‚«ãƒ³ãƒåŒºåˆ‡ã‚Šãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
             while (std::getline(ss, value, ',')) {
                 row.push_back(value);
             }
@@ -60,38 +60,36 @@ public:
         return records;
     }
 
-    // w’è‚µ‚½Aƒtƒ@ƒCƒ‹‚ÌƒeƒLƒXƒg‚ğ“Ç‚İ‚İ‚Ü‚·
+    // æŒ‡å®šã—ãŸã€ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’èª­ã¿è¾¼ã¿ã¾ã™
     void Load(const std::string& fileName) {
 
-        // ‰æ‘œ‚Ì“Ç‚İ‚İ
+        // ç”»åƒã®èª­ã¿è¾¼ã¿
         groundTex = LoadGraph("./resource/ground.png");
         
-        // ƒXƒe[ƒWî•ñ‚ğAƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚©‚çˆø‚Á’£‚é
+        // ã‚¹ãƒ†ãƒ¼ã‚¸æƒ…å ±ã‚’ã€ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰å¼•ã£å¼µã‚‹
         std::vector<std::vector<std::string>> data = readCSV(fileName);
 
-        // ƒXƒe[ƒWî•ñ‚ğAenum‚Åmap‚É“ü‚ê‚Ş
+        // ã‚¹ãƒ†ãƒ¼ã‚¸æƒ…å ±ã‚’ã€enumã§mapã«å…¥ã‚Œè¾¼ã‚€
         for (int y = 0; y < data.size(); y++) {
 
             map.push_back({});
 
-            //                      « ‚±‚ê–Y‚ê‚È‚¢‚ÅI
+            //                      â†“ ã“ã‚Œå¿˜ã‚Œãªã„ã§ï¼
             for (int x = 0; x < data[y].size(); x++) {
 
-                // string ¨ ”š ¨ enum
+                // string â†’ æ•°å­— â†’ enum
                 MapType type = (MapType)std::stoi(data[y][x]);
 
-                // enum ‚ğ mapî•ñ‚ÉŠi”[
+                // enum ã‚’ mapæƒ…å ±ã«æ ¼ç´
                 map[y].push_back(type);
 
-                // ƒ}ƒŠƒI‚Ì‰ŠúˆÊ’u‚ğİ’è
+                // ãƒãƒªã‚ªã®åˆæœŸä½ç½®ã‚’è¨­å®š
                 if (type == MapType::MARIO) {
                     mario.x = x * pixelSize;
                     mario.y = y * pixelSize;
                 }
             }
         }
-
-        // ƒ}ƒŠƒI‚ğƒ[ƒh
         mario.Load();
     }
 
@@ -118,7 +116,7 @@ public:
             }
         }
 
-        // ƒ}ƒŠƒI‚ğ•`‰æ
+        // ãƒãƒªã‚ªã‚’æç”»
         mario.Draw();
     }
 

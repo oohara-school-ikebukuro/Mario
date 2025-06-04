@@ -150,7 +150,9 @@
     <ClInclude Include="scripts\GameManager.hpp" />
     <ClInclude Include="scripts\helper\DxLibHelper.h" />
     <ClInclude Include="scripts\Mario.hpp" />
+    <ClInclude Include="scripts\SpriteMana.hpp" />
     <ClInclude Include="scripts\Stage.hpp" />
+    <ClInclude Include="scripts\Vector2.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
