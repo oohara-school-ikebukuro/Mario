@@ -19,13 +19,11 @@ public:
     }
 
     void Init() {
-
         stage.Load("./stage/stage01.txt");
-
     }
 
     void Update() {
-
+        stage.Update();
     }
 
     void Draw() {

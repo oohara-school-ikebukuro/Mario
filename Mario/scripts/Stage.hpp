@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Mario.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -25,10 +27,11 @@ public:
     std::vector<std::vector<MapType>> map;
 
     int groundTex;
-    int marioTex;
+
+    Mario mario;
 
     // コンストラクタ
-    Stage(int pixelSize) : pixelSize(pixelSize), groundTex(-1),marioTex(-1){
+    Stage(int pixelSize) : pixelSize(pixelSize), groundTex(-1), mario(pixelSize) {
     }
 
     // csv読み込み処理
@@ -62,11 +65,11 @@ public:
 
         // 画像の読み込み
         groundTex = LoadGraph("./resource/ground.png");
-        marioTex = LoadGraph("./resource/mario_idle.png"); 
-
+        
         // ステージ情報を、テキストファイルから引っ張る
         std::vector<std::vector<std::string>> data = readCSV(fileName);
 
+        // ステージ情報を、enumでmapに入れ込む
         for (int y = 0; y < data.size(); y++) {
 
             map.push_back({});
@@ -80,8 +83,20 @@ public:
                 // enum を map情報に格納
                 map[y].push_back(type);
 
+                // マリオの初期位置を設定
+                if (type == MapType::MARIO) {
+                    mario.x = x * pixelSize;
+                    mario.y = y * pixelSize;
+                }
             }
         }
+
+        // マリオをロード
+        mario.Load();
+    }
+
+    void Update(){
+        mario.Update();
     }
 
     void Draw()
@@ -97,15 +112,17 @@ public:
                         DrawGraph(x * pixelSize, y * pixelSize, groundTex, TRUE);
                         break;
                     case MapType::MARIO:
-                        DrawGraph(x * pixelSize, y * pixelSize, marioTex, TRUE);
+                        
                         break;
                 }
             }
         }
+
+        // マリオを描画
+        mario.Draw();
     }
 
     void End() {
         DeleteGraph(groundTex);
-        DeleteGraph(marioTex);
     }
 };

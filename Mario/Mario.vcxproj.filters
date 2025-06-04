@@ -38,5 +38,8 @@
     <ClInclude Include="scripts\Stage.hpp">
       <Filter>ソース ファイル\game</Filter>
     </ClInclude>
+    <ClInclude Include="scripts\Mario.hpp">
+      <Filter>ソース ファイル\game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
