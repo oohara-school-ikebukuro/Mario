@@ -23,7 +23,10 @@ public:
 
     int pixelSize;
     float x, y;
+    float velocityY; // 垂直速度
+    float gravity;   // 重力
 
+    // スプライトデータ
     int marioTex;
     bool isDirRight;
 
@@ -36,16 +39,15 @@ public:
     // コンストラクタ
     Mario(int pixelSize)
         : pixelSize(pixelSize), x(0), y(0)
+        , velocityY(0) , gravity(0.3f)
         , marioTex(-1), isDirRight(true)
-        , animType(Anim::Jump),animFrame(0),animNum(0)
+        , animType(Anim::Idle),animFrame(0),animNum(0)
     {
         // アニメーションのスプライト位置をここに追加していきます。
         animTex.insert({ Anim::Idle, {} });
-
         animTex[Anim::Idle].push_back({ 0,0 });
 
         animTex.insert({ Anim::Dush, {} });
-
         animTex[Anim::Dush].push_back({ 0,0 });
         animTex[Anim::Dush].push_back({ 1,0 });
         animTex[Anim::Dush].push_back({ 2,0 });
@@ -61,7 +63,6 @@ public:
         animTex[Anim::Jump].push_back({ 2,2 });
 
         animTex.insert({ Anim::Jump_loop, {} });
-
         animTex[Anim::Jump_loop].push_back({ 2,2 });
 
     }
@@ -72,6 +73,9 @@ public:
     }
 
     void SetAnim(Anim anim) {
+        animFrame = 0;
+        animType = anim;
+        animNum = 0;
     }
 
     void Load() {
@@ -80,15 +84,51 @@ public:
 
     void Update() {
 
+        bool isMove = false;
+
         // ←
         if (CheckHitKey(KEY_INPUT_LEFT) != 0) {
-            x -= pixelSize * 0.05f;
+            x -= pixelSize * 0.1f;
             isDirRight = false;
+            isMove = true;
         }
 
         if (CheckHitKey(KEY_INPUT_RIGHT) != 0) {
-            x += pixelSize * 0.05f;
+            x += pixelSize * 0.1f;
             isDirRight = true;
+            isMove = true;
+        }
+
+        // **ジャンプ処理**
+        if (CheckHitKey(KEY_INPUT_SPACE) != 0 && animType != Anim::Jump && animType != Anim::Jump_loop) {
+            velocityY = -10.0f;  // 初速度
+            
+            SetAnim(Anim::Jump);
+        }
+
+        // ジャンプ中は、何も変えない
+        if (animType == Anim::Jump || animType == Anim::Jump_loop) {
+
+            // **重力適用**
+            velocityY += gravity;
+            y += velocityY;
+
+            // **地面判定**
+            if (y >= 32 * 17) {
+                y = 32 * 17;
+                velocityY = 0;
+                SetAnim(Anim::Idle);
+            }
+        }
+        else if(isMove) {
+            if (animType != Anim::Dush) {
+                SetAnim(Anim::Dush);
+            }
+        }
+        else {
+            if (animType != Anim::Idle) {
+                SetAnim(Anim::Idle);
+            }
         }
     }
 
@@ -101,9 +141,9 @@ public:
             animFrame = 0;
             animNum++;
 
-            if (animNum >= animTex[animType].size()) {
+            if (animNum >= animTex[animType].size()) {                
                 if (animType == Anim::Jump) {
-                    animType = Anim::Jump_loop;
+                    SetAnim(Anim::Jump_loop);
                 }
                 animNum = 0;
             }
