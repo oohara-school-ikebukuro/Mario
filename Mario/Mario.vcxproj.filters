@@ -16,6 +16,9 @@
     <Filter Include="ソース ファイル\helper">
       <UniqueIdentifier>{d8a5eb22-998c-4c44-8a95-001bd358311c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\game">
+      <UniqueIdentifier>{89bf667e-f94e-43fc-9e60-0d449fbabeaf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="scripts\helper\DxLibHelper.cpp">
@@ -28,6 +31,12 @@
   <ItemGroup>
     <ClInclude Include="scripts\helper\DxLibHelper.h">
       <Filter>ソース ファイル\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\GameManager.hpp">
+      <Filter>ソース ファイル\game</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Stage.hpp">
+      <Filter>ソース ファイル\game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
