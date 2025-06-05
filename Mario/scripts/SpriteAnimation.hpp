@@ -1,7 +1,11 @@
 ﻿#pragma once
 
+#include "./variable/Vector2.hpp"
+
 #include <DxLib.h>
 #include <string>
+#include <map>
+#include <vector>
 
 // マリオとか、敵でアニメーション処理を作るのがめんどくさいので、
 // アニメーションの処理全部ここに書きます。
@@ -14,10 +18,20 @@ public:
     int textureHandle;
 
     int frame;
+    int animNum;  // 現在進行中の、アニメーション番号
+    int frame;    // 現在のアニメーションを実行したフレーム時間
+
+    // アニメーション用の、頂点座標リスト
+    std::map<int, std::vector<Vector2<int>>> animVertex;
 
     // コンストラクタ
     SpriteAnimation(int textureSize) // マリオだと、32が入る予定
         : textureSize(textureSize),textureX(0), textureY(0),textureHandle(0) {
+
+        // アニメーション用に、頂点座標を登録していく
+        // ダッシュ用
+        animVertex.insert({ 0, std::vector<Vector2<int>>() });
+
         animVertex[0].push_back({ 1,0 });
         animVertex[0].push_back({ 2,0 });
         animVertex[0].push_back({ 3,0 });
@@ -30,6 +44,11 @@ public:
         animVertex[0].push_back({ 2,1 });
         animVertex[0].push_back({ 1,1 });
         animVertex[0].push_back({ 0,1 });
+
+        // ☆ チャレンジ
+        // ジャンプの設定を追加してほしいです。
+        animVertex.insert({ 1, std::vector<Vector2<int>>() });
+
         animVertex[1].push_back({ 0,2 });
         animVertex[1].push_back({ 1,2 });
         animVertex[1].push_back({ 2,2 });
@@ -48,21 +67,20 @@ public:
         // 5フレーム経ったら、画像変えます。
         frame++;
         if (frame > 5) {
-            textureX++;
+            animNum++;
             frame = 0;
 
             // 画像の範囲外に行くとまずいので
             // 一番左に戻しましょう
-            if (textureX >= 4) {
-                textureX = 0;
+                animNum = 0;
             }
         }
 
         DrawRectGraph(
               x                        // x座標
             , y                        // y座標
-            , textureX * textureSize   // 表示する画像位置の左上頂点座標x
-            , textureY * textureSize   // 表示する画像位置の左上頂点座標y
+            , vertex.x * textureSize   // 表示する画像位置の左上頂点座標x
+            , vertex.y * textureSize   // 表示する画像位置の左上頂点座標y
             , textureSize              // 画像サイズx
             , textureSize              // 画像サイズy
             , textureHandle            // 使う画像のハンドル(LoadGraphした奴)
