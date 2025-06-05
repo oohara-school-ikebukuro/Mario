@@ -30,35 +30,16 @@ public:
 
         // ←
         if (CheckHitKey(KEY_INPUT_LEFT) != 0) {
-            x -= pixelSize * 0.25f;
+            x -= pixelSize * 0.1f;
         }
 
         if (CheckHitKey(KEY_INPUT_RIGHT) != 0) {
-            x += pixelSize * 0.25f;
+            x += pixelSize * 0.1f;
         }
     }
 
-    int frame = 0;
-    int textureX = 0;
     void Draw() {
 
-        // 5フレーム経ったら、画像変えます。
-        frame++;
-        if (frame > 5) {
-            textureX++;
-            frame = 0;
-
-            // 画像の範囲外に行くとまずいので
-            // 一番左に戻しましょう
-            if (textureX >= 4) {
-                textureX = 0;
-            }
-        }
-
-        // 
         spAnim.Draw(x, y);
-
-        // 書かなくてよいです↓
-        // DrawGraph( x + 7 * 32, y , marioTex, TRUE);
     }
 };

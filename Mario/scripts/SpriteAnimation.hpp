@@ -13,6 +13,8 @@ public:
     int textureX, textureY;
     int textureHandle;
 
+    int frame;
+
     // コンストラクタ
     SpriteAnimation(int textureSize) // マリオだと、32が入る予定
         : textureSize(textureSize),textureX(0), textureY(0),textureHandle(0) {
@@ -28,6 +30,19 @@ public:
     // y : y座標
     void Draw(int x , int y) {
         
+        // 5フレーム経ったら、画像変えます。
+        frame++;
+        if (frame > 5) {
+            textureX++;
+            frame = 0;
+
+            // 画像の範囲外に行くとまずいので
+            // 一番左に戻しましょう
+            if (textureX >= 4) {
+                textureX = 0;
+            }
+        }
+
         DrawRectGraph(
               x                        // x座標
             , y                        // y座標
