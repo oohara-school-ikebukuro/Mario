@@ -16,6 +16,7 @@ public:
     int textureSize;
     int textureHandle;
 
+    int animType; // 現在進行中の、アニメーション種別
     int animNum;  // 現在進行中の、アニメーション番号
     int frame;    // 現在のアニメーションを実行したフレーム時間
 
@@ -24,11 +25,12 @@ public:
 
     // コンストラクタ
     SpriteAnimation(int textureSize) // マリオだと、32が入る予定
-        : textureSize(textureSize),textureX(0), textureY(0),textureHandle(0) {
+        : textureSize(textureSize),textureHandle(0)
+        , animType(0) , animNum(0) , frame(0) {
 
         // アニメーション用に、頂点座標を登録していく
         // ダッシュ用
-        animVertex.insert({ 0, std::vector<Vector2<int>>() });
+        animVertex.emplace(0, std::vector<Vector2<int>>());
 
         animVertex[0].push_back({ 1,0 });
         animVertex[0].push_back({ 2,0 });
@@ -45,7 +47,7 @@ public:
 
         // ☆ チャレンジ
         // ジャンプの設定を追加してほしいです。
-        animVertex.insert({ 1, std::vector<Vector2<int>>() });
+        animVertex.emplace(1, std::vector<Vector2<int>>());
 
         animVertex[1].push_back({ 0,2 });
         animVertex[1].push_back({ 1,2 });
@@ -62,6 +64,11 @@ public:
     // y : y座標
     void Draw(int x , int y) {
         
+        // animVertex に、 animType の値が存在しますか？というチェックをする
+        if (animVertex.find(animType) == animVertex.end()) {
+            return;
+        }
+
         // 5フレーム経ったら、画像変えます。
         frame++;
         if (frame > 5) {
@@ -70,10 +77,12 @@ public:
 
             // 画像の範囲外に行くとまずいので
             // 一番左に戻しましょう
+            if (animNum >= animVertex[animType].size()) {
                 animNum = 0;
             }
         }
 
+        Vector2<int> vertex = animVertex[animType][animNum];
         DrawRectGraph(
               x                        // x座標
             , y                        // y座標
