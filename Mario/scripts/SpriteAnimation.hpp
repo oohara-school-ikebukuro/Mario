@@ -14,10 +14,8 @@ class SpriteAnimation {
 public:
 
     int textureSize;
-    int textureX, textureY;
     int textureHandle;
 
-    int frame;
     int animNum;  // 現在進行中の、アニメーション番号
     int frame;    // 現在のアニメーションを実行したフレーム時間
 
