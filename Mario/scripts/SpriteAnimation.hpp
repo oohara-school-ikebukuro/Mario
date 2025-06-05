@@ -11,7 +11,6 @@
 // アニメーションの処理全部ここに書きます。
 class SpriteAnimation {
 
-
     int textureSize;
     int textureHandle;
 
@@ -23,6 +22,9 @@ class SpriteAnimation {
     std::map<int, std::vector<Vector2<int>>> animVertex;
 
 public:
+
+    // 現在のアニメーションを返しますよという処理
+    int GetAnimType() { return animType; }
 
     // コンストラクタ
     SpriteAnimation(int textureSize) // マリオだと、32が入る予定

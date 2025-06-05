@@ -21,7 +21,7 @@ public:
 
     // コンストラクタ
     Mario(int pixelSize)
-        : pixelSize(pixelSize), x(0), y(0), spAnim(pixelSize){
+        : pixelSize(pixelSize), x(0), y(0), spAnim(pixelSize),isDirLeft(true){
 
         // アニメーション用に、頂点座標を登録していく
         std::vector<Vector2<int>> vertexVec;
@@ -67,9 +67,13 @@ public:
         spAnim.Load("./resource/mario.png");
     }
 
+    float velocityY = 0;  // y軸の力
+    float gravity = 0.3f; // 重力
+    bool isJump = false;  // ジャンプしてますか？
+
     void Update() {
 
-        Vector2<float> movable(0.0f, 0.0f);
+        Vector2<float> movable(0.0f, 0.0f); 
 
         // 左移動
         if (CheckHitKey(KEY_INPUT_LEFT) != 0) {
@@ -81,26 +85,49 @@ public:
             movable.x += pixelSize * 0.1f;
         }
 
+        // スペースキーでジャンプ ジャンプしていないときのみ、ジャンプです
+        if (CheckHitKey(KEY_INPUT_SPACE) != 0 && !isJump) {
+            velocityY = -10.0f;
+            isJump = true;
+        }
+
+        // ジャンプ中だったら
+        if (isJump) {
+
+            // 重力を適応します。
+            velocityY += gravity;
+            movable.y += velocityY;
+        }
+
         // 横移動があれば、ダッシュします
         if (movable.x != 0) {
 
-            // 移動値を反映
-            x += movable.x;
-            
             // 向いてる方向に変更
-            isDirLeft = ( movable.x < 0 );
+            isDirLeft = (movable.x < 0);
+        }
 
-            // ダッシュアニメーション
-            spAnim.SetAnimType((int)AnimType::Dush);
+        // 移動値を反映します。
+        x += movable.x;
+        y += movable.y;
+
+        // 最終アニメーションを決定します。
+        AnimType newType = AnimType::Idle;
+
+        if (isJump) {
+            newType = AnimType::Jump;
         }
-        // 何もしてなければ、待機モーションです
+        else if (movable.x != 0) {
+            newType = AnimType::Dush;
+        }
         else {
-            spAnim.SetAnimType((int)AnimType::Idle);
+            newType = AnimType::Idle;
         }
+
+        // アニメーションを設定します。
+        spAnim.SetAnimType((int)newType);
     }
 
     void Draw() {
-
         spAnim.Draw(x, y, isDirLeft);
     }
 };
