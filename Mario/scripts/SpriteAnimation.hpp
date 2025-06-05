@@ -11,7 +11,6 @@
 // アニメーションの処理全部ここに書きます。
 class SpriteAnimation {
 
-public:
 
     int textureSize;
     int textureHandle;
@@ -23,35 +22,30 @@ public:
     // アニメーション用の、頂点座標リスト
     std::map<int, std::vector<Vector2<int>>> animVertex;
 
+public:
+
     // コンストラクタ
     SpriteAnimation(int textureSize) // マリオだと、32が入る予定
         : textureSize(textureSize),textureHandle(0)
         , animType(0) , animNum(0) , frame(0) {
+    }
 
-        // アニメーション用に、頂点座標を登録していく
-        // ダッシュ用
-        animVertex.emplace(0, std::vector<Vector2<int>>());
+    // アニメーション種別を変更します。
+    void SetAnimType(int newType) {
 
-        animVertex[0].push_back({ 1,0 });
-        animVertex[0].push_back({ 2,0 });
-        animVertex[0].push_back({ 3,0 });
-        animVertex[0].push_back({ 2,0 });
-        animVertex[0].push_back({ 1,0 });
-        animVertex[0].push_back({ 0,1 });
-        animVertex[0].push_back({ 1,1 });
-        animVertex[0].push_back({ 2,1 });
-        animVertex[0].push_back({ 3,1 });
-        animVertex[0].push_back({ 2,1 });
-        animVertex[0].push_back({ 1,1 });
-        animVertex[0].push_back({ 0,1 });
+        if(animType != newType)
+        {
+            animType = newType;
+            animNum = 0;
+            frame = 0;
+        }
+    }
 
-        // ☆ チャレンジ
-        // ジャンプの設定を追加してほしいです。
-        animVertex.emplace(1, std::vector<Vector2<int>>());
+    // add : 追加
+    // アニメーションを追加しますよという関数
+    void AddAnimation(int animType, std::vector<Vector2<int>> vertexVec) {
 
-        animVertex[1].push_back({ 0,2 });
-        animVertex[1].push_back({ 1,2 });
-        animVertex[1].push_back({ 2,2 });
+        animVertex.emplace(animType, vertexVec);
     }
 
     // ロード処理
@@ -62,7 +56,8 @@ public:
     // 描画処理
     // x : x座標
     // y : y座標
-    void Draw(int x , int y) {
+    // isDirLeft : 左向いてるか？
+    void Draw(int x , int y, bool isDirLeft) {
         
         // animVertex に、 animType の値が存在しますか？というチェックをする
         if (animVertex.find(animType) == animVertex.end()) {
@@ -92,7 +87,8 @@ public:
             , textureSize              // 画像サイズy
             , textureHandle            // 使う画像のハンドル(LoadGraphした奴)
             , TRUE                     // 透明を使うか？
-            , FALSE                    // 画像を反転させるか？
+            , isDirLeft                // 画像を反転させるか？ 横に
+            , FALSE                    // 画像を反転させるか？ 縦に
         );
     }
 
