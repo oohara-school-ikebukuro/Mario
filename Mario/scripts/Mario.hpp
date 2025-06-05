@@ -23,7 +23,7 @@ public:
     }
 
     void Load() {
-        marioTex = LoadGraph("./resource/mario_idle.png");
+        marioTex = LoadGraph("./resource/mario.png");
     }
 
     void Update() {
@@ -38,7 +38,37 @@ public:
         }
     }
 
+    int frame = 0;
+    int textureX = 0;
     void Draw() {
-        DrawGraph( x , y , marioTex, TRUE);
+
+        // 5フレーム経ったら、画像変えます。
+        frame++;
+        if (frame > 5) {
+            textureX++;
+            frame = 0;
+
+            // 画像の範囲外に行くとまずいので
+            // 一番左に戻しましょう
+            if (textureX >= 4) {
+                textureX = 0;
+            }
+        }
+
+        // 
+        DrawRectGraph(
+              x          // x座標
+            , y          // y座標
+            , textureX * 32     // 表示する画像位置の左上頂点座標x
+            , 0 * 32     // 表示する画像位置の左上頂点座標y
+            , 32         // 画像サイズx
+            , 32         // 画像サイズy
+            , marioTex   // 使う画像のハンドル(LoadGraphした奴)
+            , TRUE       // 透明を使うか？
+            , FALSE      // 画像を反転させるか？
+        );
+
+        // 書かなくてよいです↓
+        DrawGraph( x + 7 * 32, y , marioTex, TRUE);
     }
 };
