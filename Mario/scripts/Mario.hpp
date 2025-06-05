@@ -1,5 +1,6 @@
-#pragma once
+ï»¿#pragma once
 
+#include "./SpriteAnimation.hpp"
 #include <DxLib.h>
 
 class Mario {
@@ -9,26 +10,25 @@ public:
     int pixelSize;
     float x, y;
 
-    int marioTex;
+    SpriteAnimation spAnim;
 
-    // ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+    // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
     Mario(int pixelSize)
-        : pixelSize(pixelSize), x(0), y(0), marioTex(-1){
+        : pixelSize(pixelSize), x(0), y(0), spAnim(pixelSize){
     }
 
-    // ƒfƒXƒgƒ‰ƒNƒ^
-    // Mario‚ªÁ‚¦‚½‚ÉŒÄ‚Î‚ê‚éˆ—
+    // ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+    // MarioãŒæ¶ˆãˆãŸæ™‚ã«å‘¼ã°ã‚Œã‚‹å‡¦ç†
     ~Mario() {
-        DeleteGraph(marioTex);
     }
 
     void Load() {
-        marioTex = LoadGraph("./resource/mario.png");
+        spAnim.Load("./resource/mario.png");
     }
 
     void Update() {
 
-        // ©
+        // â†
         if (CheckHitKey(KEY_INPUT_LEFT) != 0) {
             x -= pixelSize * 0.25f;
         }
@@ -42,33 +42,23 @@ public:
     int textureX = 0;
     void Draw() {
 
-        // 5ƒtƒŒ[ƒ€Œo‚Á‚½‚çA‰æ‘œ•Ï‚¦‚Ü‚·B
+        // 5ãƒ•ãƒ¬ãƒ¼ãƒ çµŒã£ãŸã‚‰ã€ç”»åƒå¤‰ãˆã¾ã™ã€‚
         frame++;
         if (frame > 5) {
             textureX++;
             frame = 0;
 
-            // ‰æ‘œ‚Ì”ÍˆÍŠO‚És‚­‚Æ‚Ü‚¸‚¢‚Ì‚Å
-            // ˆê”Ô¶‚É–ß‚µ‚Ü‚µ‚å‚¤
+            // ç”»åƒã®ç¯„å›²å¤–ã«è¡Œãã¨ã¾ãšã„ã®ã§
+            // ä¸€ç•ªå·¦ã«æˆ»ã—ã¾ã—ã‚‡ã†
             if (textureX >= 4) {
                 textureX = 0;
             }
         }
 
         // 
-        DrawRectGraph(
-              x          // xÀ•W
-            , y          // yÀ•W
-            , textureX * 32     // •\¦‚·‚é‰æ‘œˆÊ’u‚Ì¶ã’¸“_À•Wx
-            , 0 * 32     // •\¦‚·‚é‰æ‘œˆÊ’u‚Ì¶ã’¸“_À•Wy
-            , 32         // ‰æ‘œƒTƒCƒYx
-            , 32         // ‰æ‘œƒTƒCƒYy
-            , marioTex   // g‚¤‰æ‘œ‚Ìƒnƒ“ƒhƒ‹(LoadGraph‚µ‚½“z)
-            , TRUE       // “§–¾‚ğg‚¤‚©H
-            , FALSE      // ‰æ‘œ‚ğ”½“]‚³‚¹‚é‚©H
-        );
+        spAnim.Draw(x, y);
 
-        // ‘‚©‚È‚­‚Ä‚æ‚¢‚Å‚·«
-        DrawGraph( x + 7 * 32, y , marioTex, TRUE);
+        // æ›¸ã‹ãªãã¦ã‚ˆã„ã§ã™â†“
+        // DrawGraph( x + 7 * 32, y , marioTex, TRUE);
     }
 };
