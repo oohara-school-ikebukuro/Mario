@@ -18,6 +18,21 @@ public:
     // コンストラクタ
     SpriteAnimation(int textureSize) // マリオだと、32が入る予定
         : textureSize(textureSize),textureX(0), textureY(0),textureHandle(0) {
+        animVertex[0].push_back({ 1,0 });
+        animVertex[0].push_back({ 2,0 });
+        animVertex[0].push_back({ 3,0 });
+        animVertex[0].push_back({ 2,0 });
+        animVertex[0].push_back({ 1,0 });
+        animVertex[0].push_back({ 0,1 });
+        animVertex[0].push_back({ 1,1 });
+        animVertex[0].push_back({ 2,1 });
+        animVertex[0].push_back({ 3,1 });
+        animVertex[0].push_back({ 2,1 });
+        animVertex[0].push_back({ 1,1 });
+        animVertex[0].push_back({ 0,1 });
+        animVertex[1].push_back({ 0,2 });
+        animVertex[1].push_back({ 1,2 });
+        animVertex[1].push_back({ 2,2 });
     }
 
     // ロード処理
