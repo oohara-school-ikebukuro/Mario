@@ -1,7 +1,10 @@
 ﻿#pragma once
 
+#include "./Stage.hpp"
 #include "./SpriteAnimation.hpp"
 #include <DxLib.h>
+#include <algorithm>
+#include <cmath>
 
 class Mario {
 
@@ -17,11 +20,16 @@ public:
     float x, y;      // 座標
     bool isDirLeft;  // 左向いてますか？
 
+    float velocityY = 0;  // y軸の力
+    float gravity = 0.3f; // 重力
+    bool isJump = false;  // ジャンプしてますか？
+
     SpriteAnimation spAnim;
 
     // コンストラクタ
     Mario(int pixelSize)
-        : pixelSize(pixelSize), x(0), y(0), spAnim(pixelSize),isDirLeft(true){
+        : pixelSize(pixelSize), x(0), y(0)
+        , spAnim(pixelSize),isDirLeft(true){
 
         // アニメーション用に、頂点座標を登録していく
         std::vector<Vector2<int>> vertexVec;
@@ -67,11 +75,7 @@ public:
         spAnim.Load("./resource/mario.png");
     }
 
-    float velocityY = 0;  // y軸の力
-    float gravity = 0.3f; // 重力
-    bool isJump = false;  // ジャンプしてますか？
-
-    void Update() {
+    void Update(std::vector<std::vector<MapType>>& map) {
 
         Vector2<float> movable(0.0f, 0.0f); 
 
@@ -106,9 +110,9 @@ public:
             isDirLeft = (movable.x < 0);
         }
 
-        // 移動値を反映します。
-        x += movable.x;
-        y += movable.y;
+        // mapを見て、移動先が壁だったときは壁の外に押し出します。
+        // 今回判定するべき範囲を考える
+        MoveAndCollide(movable, map); 
 
         // 最終アニメーションを決定します。
         AnimType newType = AnimType::Idle;
@@ -125,6 +129,108 @@ public:
 
         // アニメーションを設定します。
         spAnim.SetAnimType((int)newType);
+    }
+
+    void MoveAndCollide(
+         const Vector2<float>& move
+        ,const std::vector<std::vector<MapType>>& map) {
+
+        int width = pixelSize;
+        int height = pixelSize;
+
+        // 横方向
+        if (move.x != 0) {
+            float toX = x + move.x;// 移動先
+
+            // 右移動なら右端を、左端なら左端のタイル列だけ見ます
+            int col = -1;
+            if (move.x > 0) {
+                // 右端
+                col = static_cast<int>((toX + width - 1) / pixelSize);
+            }
+            else {
+                // 左端
+                col = static_cast<int>(toX / pixelSize);
+            }
+            // 垂直に重なるタイル行を列挙
+            int top = static_cast<int>(y / pixelSize);
+            int bottom = static_cast<int>((y + height - 1) / pixelSize);
+
+            // 当たり判定をチェックします。
+            bool hit = false;
+            for (int row = top; row <= bottom; ++row) {
+
+                // 配列外チェック
+                if( row < 0 || row >= static_cast<int>(map.size())
+                 || col < 0 || col >= static_cast<int>(map[0].size())) {
+                    continue;
+                }
+
+                if (map[row][col] == MapType::FLOOR) {
+                    hit = true; 
+                    break; 
+                }
+            }
+            if (hit) {
+                if (move.x > 0) {
+                    x = col * pixelSize - width; // 右壁
+                }
+                else {
+                    x = (col + 1) * pixelSize;// 左壁
+                }
+            }
+            else {
+                x = toX;
+            }
+        }
+
+        if (move.y != 0) {
+            float toY = y + move.y; // 移動先
+
+            int row = -1;
+            if (move.x > 0) {
+                // 下端
+                row = static_cast<int>((toY + height - 1) / pixelSize);
+            }
+            else {
+                // 上端
+                row = static_cast<int>(toY / pixelSize);
+            }
+
+            int left = static_cast<int>(x / pixelSize);
+            int right = static_cast<int>((x + width - 1) / pixelSize);
+
+            bool hit = false;
+            for (int col = left; col <= right; ++col) {
+                // 配列外チェック
+                if (row < 0 || row >= static_cast<int>(map.size())
+                    || col < 0 || col >= static_cast<int>(map[0].size())) {
+                    continue;
+                }
+
+                if (map[row][col] == MapType::FLOOR) {
+                    hit = true;
+                    break;
+                }
+            }
+
+            if (hit) {
+                if (move.y > 0) {
+                    // 落下 → 床
+                    y = row * pixelSize - height;
+                    isJump = false;
+                }
+                else {
+                    // ジャンプ → 天井
+                    y = (row + 1) * pixelSize;
+                }
+                velocityY = 0;
+            }
+            else {
+                y = toY;
+                isJump = true;
+            }
+        }
     }
 
     void Draw() {
