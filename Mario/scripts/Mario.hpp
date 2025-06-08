@@ -97,7 +97,6 @@ public:
 
         // ジャンプ中だったら
         if (isJump) {
-
             // 重力を適応します。
             velocityY += gravity;
             movable.y += velocityY;
@@ -129,6 +128,11 @@ public:
 
         // アニメーションを設定します。
         spAnim.SetAnimType((int)newType);
+    }
+
+    // Lerp 関数の定義（ヘッダ内など共通で使える場所に）
+    float Lerp(float a, float b, float t) {
+        return a * (1.0f - t) + b * t;
     }
 
     void MoveAndCollide(
@@ -171,13 +175,18 @@ public:
                     break; 
                 }
             }
+
             if (hit) {
                 if (move.x > 0) {
-                    x = col * pixelSize - width; // 右壁
+                    col--;  // 衝突が起こったセル隣にずらす
+                    // x = col * pixelSize - width; // 右壁
                 }
                 else {
-                    x = (col + 1) * pixelSize;// 左壁
+                    col++;  // 衝突が起こったセル隣にずらす
+                    // x = (col + 1) * pixelSize;// 左壁
                 }
+                int desiredX = col * pixelSize; // 右側の場合、セルの左端へ
+                x = Lerp(x, desiredX, 0.5f);
             }
             else {
                 x = toX;
@@ -188,7 +197,7 @@ public:
             float toY = y + move.y; // 移動先
 
             int row = -1;
-            if (move.x > 0) {
+            if (move.y > 0) {
                 // 下端
                 row = static_cast<int>((toY + height - 1) / pixelSize);
             }
@@ -215,14 +224,27 @@ public:
             }
 
             if (hit) {
-                if (move.y > 0) {
-                    // 落下 → 床
-                    y = row * pixelSize - height;
-                    isJump = false;
+
+                if (move.y > 0) { // 落下 → 床
+                    // desiredY を、スプライトの下端が床に達するように計算
+                    int desiredY = row * pixelSize - height;
+                    y = Lerp(y, desiredY, 1);
+
+                    // 床との距離（スプライト下端と床の上端の差）が十分小さければ完全にスナップ
+                    int delta = fabs((y + height) - (row * pixelSize));
+                    if (delta < 2) {
+                        y = desiredY; // 完全に床に合わせる
+                        isJump = false;
+                    }
+                    // y = row * pixelSize - height;
                 }
-                else {
-                    // ジャンプ → 天井
-                    y = (row + 1) * pixelSize;
+                else { // ジャンプ → 天井
+                    row++;
+                    int desiredY = row * pixelSize;
+                    y = Lerp(y, desiredY, 0.5f);
+                    velocityY = 0;
+
+                    // y = (row + 1) * pixelSize;
                 }
                 velocityY = 0;
             }
@@ -232,6 +254,8 @@ public:
             }
         }
     }
+
+
 
     void Draw() {
         spAnim.Draw(x, y, isDirLeft);
