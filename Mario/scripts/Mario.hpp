@@ -104,7 +104,6 @@ public:
 
         // 横移動があれば、ダッシュします
         if (movable.x != 0) {
-
             // 向いてる方向に変更
             isDirLeft = (movable.x < 0);
         }
@@ -112,6 +111,8 @@ public:
         // mapを見て、移動先が壁だったときは壁の外に押し出します。
         // 今回判定するべき範囲を考える
         MoveAndCollide(movable, map); 
+
+        CheckGround(map);
 
         // 最終アニメーションを決定します。
         AnimType newType = AnimType::Idle;
@@ -228,33 +229,52 @@ public:
                 if (move.y > 0) { // 落下 → 床
                     // desiredY を、スプライトの下端が床に達するように計算
                     int desiredY = row * pixelSize - height;
-                    y = Lerp(y, desiredY, 1);
-
-                    // 床との距離（スプライト下端と床の上端の差）が十分小さければ完全にスナップ
-                    int delta = fabs((y + height) - (row * pixelSize));
-                    if (delta < 2) {
-                        y = desiredY; // 完全に床に合わせる
-                        isJump = false;
-                    }
-                    // y = row * pixelSize - height;
+                    y = Lerp(y, desiredY, 0.5f);
                 }
                 else { // ジャンプ → 天井
                     row++;
                     int desiredY = row * pixelSize;
                     y = Lerp(y, desiredY, 0.5f);
-                    velocityY = 0;
-
-                    // y = (row + 1) * pixelSize;
                 }
                 velocityY = 0;
             }
             else {
                 y = toY;
-                isJump = true;
             }
         }
     }
 
+    // 床チェック
+    void CheckGround(const std::vector<std::vector<MapType>>& map) {
+
+        int width = pixelSize;
+        int height = pixelSize;
+        float epsilon = 2.0f; // 接地許容マージン
+
+        float groundCheckY = y + height + epsilon; // 下端より 2 ピクセル下
+
+        int row = static_cast<int>(groundCheckY / pixelSize);
+        int left = static_cast<int>(x / pixelSize);
+        int right = static_cast<int>((x + width - 1) / pixelSize);
+
+        for (int col = left; col <= right; ++col) {
+            // 配列範囲チェック
+            if (row < 0 || row >= static_cast<int>(map.size()) ||
+                col < 0 || col >= static_cast<int>(map[0].size()))
+            {
+                continue;
+            }
+            if (map[row][col] == MapType::FLOOR) {
+                isJump = false;
+
+                y = (row - 1) * pixelSize; // 完全に床に合わせる
+
+                return;
+            }
+        }
+        isJump = true;
+        return;
+    }
 
 
     void Draw() {
