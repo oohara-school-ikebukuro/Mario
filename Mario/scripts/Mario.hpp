@@ -1,7 +1,8 @@
 ﻿#pragma once
 
-#include "./SpriteAnimation.hpp"
-#include <DxLib.h>
+#include "./SpriteAnimation.hpp" // スプライトアニメーションをしたいので
+#include <DxLib.h> // DXライブラリを使いたいので
+#include <vector>  // std::vectorを使いたいので
 
 class Mario {
 
@@ -71,7 +72,7 @@ public:
     float gravity = 0.3f; // 重力
     bool isJump = false;  // ジャンプしてますか？
 
-    void Update() {
+    void Update(const std::vector<std::vector<MapType>>& map) {
 
         Vector2<float> movable(0.0f, 0.0f); 
 
@@ -110,12 +111,8 @@ public:
         x += movable.x;
         y += movable.y;
 
-        // 床を貫通しないようにします。
-        if (y > pixelSize * 17) {
-            y = pixelSize * 17;
-            isJump = false; // ジャンプを辞めますよ。
-        }
-
+        // 床チェックします。
+        CheckGround(map);
 
         // 最終アニメーションを決定します。
         AnimType newType = AnimType::Idle;
@@ -132,6 +129,41 @@ public:
 
         // アニメーションを設定します。
         spAnim.SetAnimType((int)newType);
+    }
+
+    // 床チェック処理
+    void CheckGround(const std::vector<std::vector<MapType>>& map) {
+
+        int width = pixelSize;  // キャラの横幅
+        int height = pixelSize; // キャラの縦幅
+        float epsilon = 2.0f;   // 接地を許容マージン
+
+        // キャラの足元座標
+        float groundCheckY = y + height + epsilon;
+
+        int row = (int)(groundCheckY / pixelSize);      // 今回調べるべき列
+        int left = (int)(x / pixelSize);                // 今回調べるべき xの最低値 
+        int right = (int)((x + width - 1) / pixelSize); // 今回調べるべき xの最高値
+
+        for (int col = left; col <= right; ++col) {
+
+            // 配列範囲チェック
+            if (row < 0 || row >= map.size()
+             || col < 0 || col >= map[0].size()) {
+                continue;
+            }
+
+            // 床だったら、床の上に補正してジャンプを終わらせます
+            // row : y軸 / col : x軸
+            if (map[row][col] == MapType::FLOOR) {
+                isJump = false; // ジャンプを終わらせます
+                y = (row - 1) * pixelSize; // 床の上に補正します。
+                velocityY = 0;
+                return;
+            }
+        }
+        isJump = true;
+        return;
     }
 
     void Draw() {
