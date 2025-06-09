@@ -190,6 +190,7 @@ public:
                 x = toX;
             }
         }
+
         if (movable.y != 0) {
             // 縦のチェック
             float toY = y + movable.y;
@@ -234,6 +235,7 @@ public:
                 // 移動を完遂する
                 int desiredY = row * pixelSize;
                 y = desiredY;
+                velocityY = 0;
             }
             else {
                 y = toY;
