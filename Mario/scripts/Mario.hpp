@@ -107,9 +107,8 @@ public:
             isDirLeft = (movable.x < 0);
         }
 
-        // 移動値を反映します。
-        x += movable.x;
-        y += movable.y;
+        // 移動と、当たり判定の二つを行います。
+        MoveAndCollide(movable, map);
 
         // 床チェックします。
         CheckGround(map);
@@ -129,6 +128,117 @@ public:
 
         // アニメーションを設定します。
         spAnim.SetAnimType((int)newType);
+    }
+
+    // 移動しながら、当たり判定チェック
+    void MoveAndCollide(
+        const Vector2<float>& movable
+      , const std::vector<std::vector<MapType>>& map) {
+
+        int width = pixelSize;  // キャラの横幅
+        int height = pixelSize; // キャラの縦幅
+
+        // 横方向
+        if (movable.x != 0) {
+
+            // 今回の移動先
+            float toX = x + movable.x;
+            
+            // 今回判定するべき行を、割り出します。
+            int col = -1;
+
+            // 右移動
+            if (movable.x > 0) { 
+                col = (int)((toX + width - 1) / pixelSize);
+            }
+            else { // 左移動
+                col = (int)(toX / pixelSize);
+            }
+
+            // 今回判定するべき列を割り出す
+            int top = (int)(y / pixelSize);
+            int bottom = (int)((y + height - 1) / pixelSize);
+
+            // 当たり判定チェックしましょう
+            bool isHit = false;
+            for (int row = top; row <= bottom; ++row) {
+                
+                // 配列範囲チェック
+                if (row < 0 || row >= map.size()
+                 || col < 0 || col >= map[0].size()) {
+                    continue;
+                }
+                // 何かに当たった？
+                if (map[row][col] == MapType::FLOOR) {
+                    isHit = true;
+                    break; // 当たったらもう用がないので、breakして抜ける
+                }
+            }
+            // 当たっていたら・・
+            if (isHit) {
+                if (movable.x > 0) {
+                    col--; // 右から左に戻す必要があるので、-1
+                }
+                else {
+                    col++; // 左から右に戻す必要があるので、+1
+                }
+                // 移動を完遂する
+                int desiredX = col * pixelSize;
+                x = desiredX;
+            }
+            else {
+                x = toX;
+            }
+        }
+        if (movable.y != 0) {
+            // 縦のチェック
+            float toY = y + movable.y;
+
+            // 今回判定するべき列を割り出す
+            int row = -1;
+            if (movable.y > 0) {
+                row = (int)((toY + height - 1) / pixelSize);
+            }
+            else { // 左移動
+                row = (int)(toY / pixelSize);
+            }
+
+            // 今回判定するべき行を割り出す
+            int left = (int)(x / pixelSize);
+            int right = (int)((x + width - 1) / pixelSize);
+
+            // 当たり判定チェックしましょう
+            bool isHit = false;
+            for (int col = left; col <= right; ++col) {
+
+                // 配列範囲チェック
+                if (row < 0 || row >= map.size()
+                    || col < 0 || col >= map[0].size()) {
+                    continue;
+                }
+                // 何かに当たった？
+                if (map[row][col] == MapType::FLOOR) {
+                    isHit = true;
+                    break; // 当たったらもう用がないので、breakして抜ける
+                }
+            }
+
+            // 当たっていたら・・
+            if (isHit) {
+                if (movable.y > 0) {
+                    row--; // 右から左に戻す必要があるので、-1
+                }
+                else {
+                    row++; // 左から右に戻す必要があるので、+1
+                }
+                // 移動を完遂する
+                int desiredY = row * pixelSize;
+                y = desiredY;
+            }
+            else {
+                y = toY;
+            }
+        }
     }
 
     // 床チェック処理
