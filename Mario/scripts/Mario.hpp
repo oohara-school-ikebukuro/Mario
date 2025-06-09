@@ -110,6 +110,13 @@ public:
         x += movable.x;
         y += movable.y;
 
+        // 床を貫通しないようにします。
+        if (y > pixelSize * 17) {
+            y = pixelSize * 17;
+            isJump = false; // ジャンプを辞めますよ。
+        }
+
+
         // 最終アニメーションを決定します。
         AnimType newType = AnimType::Idle;
 
