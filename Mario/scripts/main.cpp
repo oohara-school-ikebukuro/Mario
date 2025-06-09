@@ -1,31 +1,31 @@
-
+ï»¿
 #include "./helper/DxLibHelper.h"
 #include "./GameManager.hpp"
 
 #include <DxLib.h>
 
-// ƒRƒ“ƒ\[ƒ‹ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚Ì‚ÍAint main ‚©‚çn‚Ü‚é
+// ã‚³ãƒ³ã‚½ãƒ¼ãƒ«ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®æ™‚ã¯ã€int main ã‹ã‚‰å§‹ã¾ã‚‹
 /*
 int main()
 {
 }
 */
 
-// ƒEƒBƒ“ƒhƒEƒYƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÍAint WINAPI WinMain ‚©‚çn‚Ü‚é
-// ƒvƒƒOƒ‰ƒ€‚Í WinMain ‚©‚çn‚Ü‚è‚Ü‚·
+// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚ºã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã¯ã€int WINAPI WinMain ã‹ã‚‰å§‹ã¾ã‚‹
+// ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã¯ WinMain ã‹ã‚‰å§‹ã¾ã‚Šã¾ã™
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	GameManager gm;
 
-	// DXƒ‰ƒCƒuƒ‰ƒŠ‚ÌA‚¨•‚¯ƒ}ƒ“‚ğì‚éB
+	// DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®ã€ãŠåŠ©ã‘ãƒãƒ³ã‚’ä½œã‚‹ã€‚
 	DxLibHelper dxHelper(gm.fps);
 
-	// DXƒ‰ƒCƒuƒ‰ƒŠ‚ğŠJn‚µ‚Ü‚·B
+	// DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚’é–‹å§‹ã—ã¾ã™ã€‚
 	if (dxHelper.Init({ ScreenType::WINDOWED, gm.winX ,gm.winY }) != 0) {
 		return -1;
 	}
 
-	// ƒƒCƒ“ƒ‹[ƒv -------------------------------------------------
+	// ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ— -------------------------------------------------
 	gm.Init();
 
 	while (gm.isRun) {
@@ -34,16 +34,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		gm.Draw();
 
-		// •`‰æXV + FPS’²®‚ğ‚µ‚Ä‚­‚ê‚é—Ç‚¢“z
+		// æç”»æ›´æ–° + FPSèª¿æ•´ã‚’ã—ã¦ãã‚Œã‚‹è‰¯ã„å¥´
 		dxHelper.RefreshScreen();
 	}
 
 	// --------------------------------------------------------------
 
-	gm.End();
 
-
-	// DXƒ‰ƒCƒuƒ‰ƒŠ‚ğI‚í‚è‚Ü‚·B
+	// DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚’çµ‚ã‚ã‚Šã¾ã™ã€‚
 	dxHelper.Cleanup();
 
 	return 0;

@@ -44,5 +44,11 @@
     <ClInclude Include="scripts\SpriteAnimation.hpp">
       <Filter>ソース ファイル\game</Filter>
     </ClInclude>
+    <ClInclude Include="scripts\PlayManager.hpp">
+      <Filter>ソース ファイル\game</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\TitleManager.hpp">
+      <Filter>ソース ファイル\game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
