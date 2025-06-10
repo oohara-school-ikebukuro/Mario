@@ -9,11 +9,11 @@ class PlayManager {
 
 public: // ← 忘れずに
 
-    PlayManager() : stage(32) {
+    PlayManager() : stage(16) {
     }
 
     void Init() {
-        stage.Load("./stage/stage01.txt");
+        stage.Load("./stage/stage01.csv");
     }
 
     void Update() {

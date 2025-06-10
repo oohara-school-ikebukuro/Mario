@@ -66,7 +66,7 @@ public:
     void Load(const std::string& fileName) {
 
         // 画像の読み込み
-        groundTex = LoadGraph("./resource/ground.png");
+        groundTex = LoadGraph("./resource/blocks.png");
         
         // ステージ情報を、テキストファイルから引っ張る
         std::vector<std::vector<std::string>> data = readCSV(fileName);
@@ -106,15 +106,23 @@ public:
         for (int y = 0; y < map.size(); y++) {
             for (int x = 0; x < map[y].size(); x++) {
 
+                int posX = x * pixelSize;
+                int posY = y * pixelSize;
+
                 switch (map[y][x]) {
                     case MapType::FLOOR:
-                        DrawGraph(x * pixelSize, y * pixelSize, groundTex, TRUE);
+
+                        DrawRectGraph(posX, posY, 4 * pixelSize, 0 * pixelSize, pixelSize
+                            , pixelSize,groundTex, TRUE, false, false);
+
                         break;
                     case MapType::WALL:
-                        DrawGraph(x * pixelSize, y * pixelSize, groundTex, TRUE);
+
+                        DrawRectGraph(posX, posY, 6 * pixelSize, 0 * pixelSize, pixelSize
+                            , pixelSize, groundTex, TRUE, false, false);
+
                         break;
                     case MapType::MARIO:
-                        
                         break;
                 }
             }

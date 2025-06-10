@@ -31,24 +31,13 @@ public:
         vertexVec.push_back({ 1,0 });
         vertexVec.push_back({ 2,0 });
         vertexVec.push_back({ 3,0 });
-        vertexVec.push_back({ 2,0 });
-        vertexVec.push_back({ 1,0 });
-        vertexVec.push_back({ 0,1 });
-        vertexVec.push_back({ 1,1 });
-        vertexVec.push_back({ 2,1 });
-        vertexVec.push_back({ 3,1 });
-        vertexVec.push_back({ 2,1 });
-        vertexVec.push_back({ 1,1 });
-        vertexVec.push_back({ 0,1 });
 
         // ダッシュのアニメーションをSpriteAnimationに設定します
         spAnim.AddAnimation((int)AnimType::Dush, vertexVec);
         vertexVec.clear(); // 中身を空にする
 
         // ジャンプの登録
-        vertexVec.push_back({ 0,2 });
-        vertexVec.push_back({ 1,2 });
-        vertexVec.push_back({ 2,2 });
+        vertexVec.push_back({ 5,0 });
 
         spAnim.AddAnimation((int)AnimType::Jump, vertexVec);
         vertexVec.clear(); // 中身を空にする
