@@ -1,0 +1,5 @@
+root = true
+
+# C++やヘッダーファイルをUTF-8に設定
+[*.{cpp,h,hpp}]
+charset = utf-8-bom
