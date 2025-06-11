@@ -57,10 +57,18 @@ public:
 
         Rect texRect = textures[num];
 
-        rect.x = rect.x;
-        rect.y = rect.y;
-        rect.width = rect.width;
-        rect.height = rect.height;
+        // 画像を横に反転しますよ
+        if (isFlipX == true) {
+
+            rect.x = rect.x + rect.width;
+            rect.width = -rect.width;
+        }
+
+        // 画像を縦に反転しますよ
+        if (isFlipY == true) {
+            rect.y = rect.y + rect.height;
+            rect.height = -rect.height;
+        }
 
         // 画像描画
         Draw(rect, texRect);

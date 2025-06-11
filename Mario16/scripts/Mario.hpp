@@ -6,9 +6,15 @@
 
 class Mario {
 
+    enum class AnimTexType {
+          Idle
+        , Dash1, Dash2, Dash3
+        , Jump
+    };
+
     enum class AnimType {
           Idle
-        , Dush
+        , Dash
         , Jump
     };
 
@@ -25,29 +31,6 @@ public:
     // コンストラクタ
     Mario(int pixelSize)
         : pixelSize(pixelSize), x(0), y(0), spAnim(pixelSize),isDirLeft(true){
-
-        // アニメーション用に、頂点座標を登録していく
-        std::vector<Vector2<int>> vertexVec;
-
-        // ダッシュの登録
-        vertexVec.push_back({ 1,0 });
-        vertexVec.push_back({ 2,0 });
-        vertexVec.push_back({ 3,0 });
-
-        // ダッシュのアニメーションをSpriteAnimationに設定します
-        spAnim.AddAnimation((int)AnimType::Dush, vertexVec);
-        vertexVec.clear(); // 中身を空にする
-
-        // ジャンプの登録
-        vertexVec.push_back({ 5,0 });
-
-        spAnim.AddAnimation((int)AnimType::Jump, vertexVec);
-        vertexVec.clear(); // 中身を空にする
-
-        // 待機 の登録
-        vertexVec.push_back({ 0, 0 });
-        spAnim.AddAnimation((int)AnimType::Idle, vertexVec);
-        vertexVec.clear(); // 中身を空にする
     }
 
     // デストラクタ
@@ -56,16 +39,58 @@ public:
     }
 
     void Load() {
-        spAnim.Load("./resource/mario.png");
+
+        // 画像切り出し設定
+        std::map<int, Rect> textures;
+
+        // 待機画像の切り出し
+        textures.insert({(int)AnimTexType::Idle,{0 * 16,0 * 16,16,16} });
+
+        // ダッシュ画像の切り出し
+        textures.insert({ (int)AnimTexType::Dash1,{ 1 * 16 , 0 * 16 , 16 , 16} });
+        textures.insert({ (int)AnimTexType::Dash2,{ 2 * 16 , 0 * 16 , 16 , 16} });
+        textures.insert({ (int)AnimTexType::Dash3,{ 3 * 16 , 0 * 16 , 16 , 16} });
+
+        // ジャンプ画像の切り出し
+        textures.insert({ (int)AnimTexType::Jump,{ 5 * 16 , 0 * 16 , 16 , 16} });
+
+        // 画像のロード
+        spAnim.Load("./resource/mario.png", textures);
+
+        // アニメーションを設定して追加します。
+        std::vector<int> animVec;
+
+        // 待機アニメーション設定
+        animVec.push_back((int)AnimTexType::Idle);
+        spAnim.AddAnimation((int)AnimType::Idle, animVec);
+        animVec.clear();
+
+        // ダッシュアニメーション設定
+        animVec.push_back((int)AnimTexType::Dash1);
+        animVec.push_back((int)AnimTexType::Dash2);
+        animVec.push_back((int)AnimTexType::Dash3);
+        spAnim.AddAnimation((int)AnimType::Dash, animVec);
+        animVec.clear();
+
+        // ジャンプアニメーション
+        animVec.push_back((int)AnimTexType::Jump);
+        spAnim.AddAnimation((int)AnimType::Jump, animVec);
+        animVec.clear();
     }
 
     float velocityY = 0;  // y軸の力
+    float velocityX = 0;  // x軸の力
     float gravity = 0.3f; // 重力
     bool isJump = false;  // ジャンプしてますか？
 
     void Update(const std::vector<std::vector<MapType>>& map) {
 
         Vector2<float> movable(0.0f, 0.0f); 
+
+        velocityX *= 0.75f;
+        if (velocityX < 0.1f && velocityX > -0.1f) {
+            velocityX = 0;
+        }
 
         // 左移動
         if (CheckHitKey(KEY_INPUT_LEFT) != 0) {
@@ -88,7 +113,7 @@ public:
             if (movable.x != 0) {
 
                 velocityY = -5.0f; // ジャンプしたときの推進力
-                movable.x *= -1 * 2;
+                velocityX = -movable.x * 5;
             }
         }
 
@@ -120,7 +145,7 @@ public:
             newType = AnimType::Jump;
         }
         else if (movable.x != 0) {
-            newType = AnimType::Dush;
+            newType = AnimType::Dash;
         }
         else {
             newType = AnimType::Idle;
@@ -142,7 +167,7 @@ public:
         if (movable.x != 0) {
 
             // 今回の移動先
-            float toX = x + movable.x;
+            float toX = x + movable.x + velocityX;
             
             // 今回判定するべき行を、割り出します。
             int col = -1;

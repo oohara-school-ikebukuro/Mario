@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "./variable/Vector2.hpp"
+#include "./Sprite.hpp"
 
 #include <DxLib.h>
 #include <string>
@@ -12,14 +13,16 @@
 class SpriteAnimation {
 
     int textureSize;
-    int textureHandle;
 
     int animType; // 現在進行中の、アニメーション種別
     int animNum;  // 現在進行中の、アニメーション番号
     int frame;    // 現在のアニメーションを実行したフレーム時間
 
     // アニメーション用の、頂点座標リスト
-    std::map<int, std::vector<Vector2<int>>> animVertex;
+    std::map<int, std::vector<int>> animVertex;
+
+    // スプライトを保持
+    Sprite sprite;
 
 public:
 
@@ -28,7 +31,7 @@ public:
 
     // コンストラクタ
     SpriteAnimation(int textureSize) // マリオだと、32が入る予定
-        : textureSize(textureSize),textureHandle(0)
+        : textureSize(textureSize)
         , animType(0) , animNum(0) , frame(0) {
     }
 
@@ -45,14 +48,19 @@ public:
 
     // add : 追加
     // アニメーションを追加しますよという関数
-    void AddAnimation(int animType, std::vector<Vector2<int>> vertexVec) {
+    void AddAnimation(int animType, std::vector<int> animNumVec) {
 
-        animVertex.emplace(animType, vertexVec);
+        animVertex.emplace(animType, animNumVec);
     }
 
     // ロード処理
-    void Load(const std::string& fileName) {
-        textureHandle = LoadGraph(fileName.c_str());
+    void Load(const std::string& fileName, const std::map<int, Rect>& textures) {
+        sprite.Load(fileName);
+
+        // テクスチャ分割設定を、Spriteに反映していきます。
+        for (const auto& pair : textures) {
+            sprite.SetTexture(pair.first, pair.second);
+        }
     }
 
     // 描画処理
@@ -79,6 +87,16 @@ public:
             }
         }
 
+        // 画像描画します。
+        int anim = animVertex[animType][animNum];
+        int width = textureSize;
+        int height = textureSize;
+        sprite.Draw(
+            { x , y , width ,  height },
+            anim,isDirLeft,FALSE
+        );
+
+        /*
         Vector2<int> vertex = animVertex[animType][animNum];
         DrawRectGraph(
               x                        // x座標
@@ -92,6 +110,6 @@ public:
             , isDirLeft                // 画像を反転させるか？ 横に
             , FALSE                    // 画像を反転させるか？ 縦に
         );
+        */
     }
-
 };
