@@ -6,6 +6,7 @@ enum class MapType {
     , FLOOR = 1
     , WALL = 2
     , MARIO = 3
+    , COIN = 4
 };
 
 #include "Mario.hpp"
@@ -28,6 +29,8 @@ public:
     std::vector<std::vector<MapType>> map;
 
     Sprite ground;
+    Sprite items;
+
     Mario mario;
 
     // コンストラクタ
@@ -63,12 +66,20 @@ public:
     // 指定した、ファイルのテキストを読み込みます
     void Load(const std::string& fileName) {
 
-        // 画像の読み込み
+        // 床画像の読み込み
         ground.Load("./resource/blocks.png");
 
-        // 画像の切り出し
-        ground.SetTexture(0, { 5 * 16 , 3 * 16 , 16 , 16 });
+        // 床画像の切り出し
+        ground.SetTexture(0, { 3 * 16 , 3 * 16 , 16 , 16 });
+        ground.SetTexture(1, { 5 * 16 , 3 * 16 , 16 , 16 });
+        ground.SetTexture(2, { 3 * 16 , 1 * 16 , 16 , 16 });
         
+        // アイテム画像の読み込み
+        items.Load("./resource/items.png");
+
+        // コイン画像の切り出し
+        items.SetTexture(0, { 124,94,16,16 });
+
         // ステージ情報を、テキストファイルから引っ張る
         std::vector<std::vector<std::string>> data = readCSV(fileName);
 
@@ -115,16 +126,21 @@ public:
                 switch (map[y][x]) {
                     case MapType::FLOOR:
 
-                        ground.Draw(rect, 0);
+                        ground.Draw(rect, 2);
 
                         break;
                     case MapType::WALL:
 
-                        ground.Draw(rect, 0);
+                        ground.Draw(rect, 1);
 
                         break;
                     case MapType::MARIO:
                         break;
+                    case MapType::COIN:
+                        
+                        items.Draw(rect, 0);
+
+                    break;
                 }
             }
         }

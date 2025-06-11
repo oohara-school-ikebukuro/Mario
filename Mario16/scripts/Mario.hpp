@@ -83,7 +83,7 @@ public:
     float gravity = 0.3f; // 重力
     bool isJump = false;  // ジャンプしてますか？
 
-    void Update(const std::vector<std::vector<MapType>>& map) {
+    void Update(std::vector<std::vector<MapType>>& map) {
 
         Vector2<float> movable(0.0f, 0.0f); 
 
@@ -104,7 +104,7 @@ public:
 
         // スペースキーでジャンプ ジャンプしていないときのみ、ジャンプです
         if (CheckHitKey(KEY_INPUT_SPACE) != 0 && !isJump) {
-            velocityY = -5.0f;
+            velocityY = -7.0f;
             isJump = true;
         }
         // 壁ジャンプ
@@ -112,7 +112,7 @@ public:
         {
             if (movable.x != 0) {
 
-                velocityY = -5.0f; // ジャンプしたときの推進力
+                velocityY = -7.0f; // ジャンプしたときの推進力
                 velocityX = -movable.x * 5;
             }
         }
@@ -158,10 +158,11 @@ public:
     // 移動しながら、当たり判定チェック
     void MoveAndCollide(
         const Vector2<float>& movable
-      , const std::vector<std::vector<MapType>>& map) {
+      , std::vector<std::vector<MapType>>& map) {
 
         int width = pixelSize;  // キャラの横幅
         int height = pixelSize; // キャラの縦幅
+
 
         // 横方向
         if (movable.x != 0) {
@@ -194,9 +195,15 @@ public:
                     continue;
                 }
                 // 何かに当たった？
-                if (map[row][col] == MapType::FLOOR) {
+                if (map[row][col] == MapType::FLOOR
+                 || map[row][col] == MapType::WALL) {
                     isHit = true;
                     break; // 当たったらもう用がないので、breakして抜ける
+                }
+
+                // コインに当たった
+                if (map[row][col] == MapType::COIN) {
+                    map[row][col] = MapType::NONE;
                 }
             }
             // 当たっていたら・・
@@ -247,9 +254,14 @@ public:
                     continue;
                 }
                 // 何かに当たった？
-                if (map[row][col] == MapType::FLOOR) {
+                if (map[row][col] == MapType::FLOOR
+                 || map[row][col] == MapType::WALL) {
                     isHit = true;
                     break; // 当たったらもう用がないので、breakして抜ける
+                }
+
+                if (map[row][col] == MapType::COIN) {
+                    map[row][col] = MapType::NONE;
                 }
             }
 
@@ -296,7 +308,8 @@ public:
 
             // 床だったら、床の上に補正してジャンプを終わらせます
             // row : y軸 / col : x軸
-            if (map[row][col] == MapType::FLOOR) {
+            if (map[row][col] == MapType::FLOOR
+             || map[row][col] == MapType::WALL) {
                 isJump = false; // ジャンプを終わらせます
                 y = (row - 1) * pixelSize; // 床の上に補正します。
                 velocityY = 0;
