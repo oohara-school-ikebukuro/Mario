@@ -200,7 +200,6 @@ public:
                     isHit = true;
                     break; // 当たったらもう用がないので、breakして抜ける
                 }
-
                 // コインに当たった
                 if (map[row][col] == MapType::COIN) {
                     map[row][col] = MapType::NONE;
@@ -222,9 +221,11 @@ public:
             }
             else {
                 isWallHit = false;
-
                 x = toX;
             }
+        }
+        else {
+            isWallHit = false;
         }
 
         if (movable.y != 0) {
