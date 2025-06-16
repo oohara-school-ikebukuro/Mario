@@ -270,7 +270,7 @@ public:
         float groundCheckY = y + height + epsilon;
 
         int row = (int)(groundCheckY / pixelSize);      // 今回調べるべき列
-        int left = (int)(x / pixelSize);                // 今回調べるべき xの最低値 
+        int left = (int)(x / pixelSize);                // 今回調べるべき xの最低値
         int right = (int)((x + width - 1) / pixelSize); // 今回調べるべき xの最高値
 
         for (int col = left; col <= right; ++col) {
