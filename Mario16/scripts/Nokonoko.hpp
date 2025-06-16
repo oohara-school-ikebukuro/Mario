@@ -49,11 +49,11 @@ public:
         std::map<int, Rect> textures;
 
         // 待機画像の切り出し
-        textures.insert({ (int)AnimTexType::Idle,{210,0,16,24} });
+        textures.insert({ (int)AnimTexType::Idle,{ 210 , 0 , 16 , 24 } });
 
         // ダッシュ画像の切り出し
-        textures.insert({ (int)AnimTexType::Dash1,{210,0,16,24} });
-        textures.insert({ (int)AnimTexType::Dash2,{240,0,16,24} });
+        textures.insert({ (int)AnimTexType::Dash1,{ 210 , 0 , 16 , 24 } });
+        textures.insert({ (int)AnimTexType::Dash2,{ 240 , 0 , 16 , 24 } });
 
         // ジャンプ画像の切り出し
         textures.insert({ (int)AnimTexType::Jump,{210,0,16,24} });
@@ -85,11 +85,15 @@ public:
     float velocityX = 0;  // x軸の力
     float gravity = 0.3f; // 重力
     bool isJump = false;  // ジャンプしてますか？
+    bool isDirLeft = true; // 左を向いていますか？
 
     void Update(std::vector<std::vector<MapType>>& map) {
 
-        Vector2<float> movable(0.0f, 0.0f);
+        Vector2<float> movable(0.5f, 0.0f);
 
+        // ノコノコが向いている方向に移動させます。
+        if (isDirLeft) {
+            movable.x *= -1;
         }
 
         // ジャンプ中だったら
@@ -179,9 +183,11 @@ public:
 
                 if (movable.x > 0) {
                     col--; // 右から左に戻す必要があるので、-1
+                    isDirLeft = true;
                 }
                 else {
                     col++; // 左から右に戻す必要があるので、+1
+                    isDirLeft = false;
                 }
                 // 移動を完遂する
                 int desiredX = col * pixelSize;

@@ -2,6 +2,7 @@
 
 #include "./SpriteAnimation.hpp" // スプライトアニメーションをしたいので
 
+#include "Nokonoko.hpp"
 #include "MapType.hpp"
 
 #include <DxLib.h> // DXライブラリを使いたいので
@@ -326,5 +327,33 @@ public:
 
     void Draw() {
         spAnim.Draw(x, y, isDirLeft);
+    }
+
+    // ノコノコと当たったか？
+    void HitEnemy(Nokonoko& nokonoko) {
+
+        // マリオの各辺の座標を割り出す
+        // lx = left x , rx = right x
+        int m_lx = x;
+        int m_ly = y;
+        int m_rx = x + pixelSize;
+        int m_ry = y + pixelSize;
+
+        // ノコノコの各辺の座標を割り出す
+        int n_lx = nokonoko.x;
+        int n_ly = nokonoko.y;
+        int n_rx = nokonoko.x + nokonoko.pixelSize;
+        int n_ry = nokonoko.y + nokonoko.pixelSize;
+
+        // 当たり判定 四角と四角
+        if (m_rx > n_lx &&
+            m_ly < n_ry &&
+            m_lx < n_rx &&
+            m_ry > n_ly) {
+
+            velocityY = -10.0f;
+
+            nokonoko.Hit();
+        }
     }
 };

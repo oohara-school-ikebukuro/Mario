@@ -127,7 +127,10 @@ public:
 
         //          ↓ ノコノコ
         for (auto& nokonoko : nokonokos) {
+
             nokonoko.Update(map);
+            
+            mario.HitEnemy(nokonoko);
         }
     }
 
