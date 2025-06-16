@@ -100,13 +100,6 @@ public:
             movable.y += velocityY;
         }
 
-        // 横移動があれば、ダッシュします
-        if (movable.x != 0) {
-
-            // 向いてる方向に変更
-            isDirLeft = (movable.x < 0);
-        }
-
         // 移動と、当たり判定の二つを行います。
         MoveAndCollide(movable, map);
 
