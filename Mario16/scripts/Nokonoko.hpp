@@ -133,8 +133,8 @@ public:
 
 
         // 横方向
-        if (movable.x != 0) {
-
+        if (movable.x != 0) 
+        {
             // 今回の移動先
             float toX = x + movable.x + velocityX;
 
