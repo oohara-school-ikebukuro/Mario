@@ -90,34 +90,6 @@ public:
 
         Vector2<float> movable(0.0f, 0.0f);
 
-        velocityX *= 0.75f;
-        if (velocityX < 0.1f && velocityX > -0.1f) {
-            velocityX = 0;
-        }
-
-        // 左移動
-        if (CheckHitKey(KEY_INPUT_LEFT) != 0) {
-            movable.x -= pixelSize * 0.1f;
-        }
-
-        // 右移動
-        if (CheckHitKey(KEY_INPUT_RIGHT) != 0) {
-            movable.x += pixelSize * 0.1f;
-        }
-
-        // スペースキーでジャンプ ジャンプしていないときのみ、ジャンプです
-        if (CheckHitKey(KEY_INPUT_SPACE) != 0 && !isJump) {
-            velocityY = -7.0f;
-            isJump = true;
-        }
-        // 壁ジャンプ
-        else if (CheckHitKey(KEY_INPUT_SPACE) != 0 && isJump && isWallHit)
-        {
-            if (movable.x != 0) {
-
-                velocityY = -7.0f; // ジャンプしたときの推進力
-                velocityX = -movable.x * 5;
-            }
         }
 
         // ジャンプ中だったら
