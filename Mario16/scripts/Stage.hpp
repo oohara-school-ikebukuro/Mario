@@ -1,15 +1,8 @@
 ﻿#pragma once
 
-enum class MapType {
-
-      NONE = 0
-    , FLOOR = 1
-    , WALL = 2
-    , MARIO = 3
-    , COIN = 4
-};
-
+#include "MapType.hpp"
 #include "Mario.hpp"
+#include "Nokonoko.hpp"
 #include "Sprite.hpp"
 
 #include <iostream>
@@ -32,6 +25,8 @@ public:
     Sprite items;
 
     Mario mario;
+
+    std::vector<Nokonoko> nokonokos;
 
     // コンストラクタ
     Stage(int pixelSize) : pixelSize(pixelSize), mario(pixelSize) {
@@ -84,6 +79,9 @@ public:
         std::vector<std::vector<std::string>> data = readCSV(fileName);
 
         // ステージ情報を、enumでmapに入れ込む
+        map.clear();
+        nokonokos.clear(); // ノコノコのデータを初期化する。
+
         for (int y = 0; y < data.size(); y++) {
 
             map.push_back({});
@@ -102,6 +100,21 @@ public:
                     mario.x = x * pixelSize;
                     mario.y = y * pixelSize;
                 }
+                else if (type == MapType::NOKONOKO) {
+
+                    // ノコノコを作ります。
+                    Nokonoko nokonoko(pixelSize);
+
+                    // ノコノコの座標を設定
+                    nokonoko.x = x * pixelSize;
+                    nokonoko.y = y * pixelSize;
+
+                    // データのロード処理
+                    nokonoko.Load();
+
+                    // ノコノコを追加
+                    nokonokos.push_back(nokonoko);
+                }
             }
         }
 
@@ -111,6 +124,11 @@ public:
 
     void Update(){
         mario.Update(map);
+
+        //          ↓ ノコノコ
+        for (auto& nokonoko : nokonokos) {
+            nokonoko.Update(map);
+        }
     }
 
     void Draw()
@@ -147,6 +165,11 @@ public:
 
         // マリオを描画
         mario.Draw();
+
+        //          ↓ ノコノコ
+        for (auto& nokonoko : nokonokos) {
+            nokonoko.Draw();
+        }
     }
 
     void End() {

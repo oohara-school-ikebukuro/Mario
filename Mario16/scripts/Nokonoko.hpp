@@ -7,11 +7,12 @@
 #include <DxLib.h> // DXライブラリを使いたいので
 #include <vector>  // std::vectorを使いたいので
 
-class Mario {
+// ノコノコです
+class Nokonoko {
 
     enum class AnimTexType {
           Idle
-        , Dash1, Dash2, Dash3
+        , Dash1, Dash2
         , Jump
     };
 
@@ -32,13 +33,14 @@ public:
     SpriteAnimation spAnim;
 
     // コンストラクタ
-    Mario(int pixelSize)
-        : pixelSize(pixelSize), x(0), y(0), spAnim(pixelSize),isDirLeft(true){
+    Nokonoko(int pixelSize)
+        : pixelSize(pixelSize), x(0), y(0)
+        , spAnim(pixelSize), isDirLeft(true) {
     }
 
     // デストラクタ
     // Marioが消えた時に呼ばれる処理
-    ~Mario() {
+    ~Nokonoko() {
     }
 
     void Load() {
@@ -47,18 +49,17 @@ public:
         std::map<int, Rect> textures;
 
         // 待機画像の切り出し
-        textures.insert({(int)AnimTexType::Idle,{0 * 16,0 * 16,16,16} });
+        textures.insert({ (int)AnimTexType::Idle,{210,0,16,24} });
 
         // ダッシュ画像の切り出し
-        textures.insert({ (int)AnimTexType::Dash1,{ 1 * 16 , 0 * 16 , 16 , 16} });
-        textures.insert({ (int)AnimTexType::Dash2,{ 2 * 16 , 0 * 16 , 16 , 16} });
-        textures.insert({ (int)AnimTexType::Dash3,{ 3 * 16 , 0 * 16 , 16 , 16} });
+        textures.insert({ (int)AnimTexType::Dash1,{210,0,16,24} });
+        textures.insert({ (int)AnimTexType::Dash2,{240,0,16,24} });
 
         // ジャンプ画像の切り出し
-        textures.insert({ (int)AnimTexType::Jump,{ 5 * 16 , 0 * 16 , 16 , 16} });
+        textures.insert({ (int)AnimTexType::Jump,{210,0,16,24} });
 
         // 画像のロード
-        spAnim.Load("./resource/mario.png", textures);
+        spAnim.Load("./resource/enemies.png", textures);
 
         // アニメーションを設定して追加します。
         std::vector<int> animVec;
@@ -71,7 +72,6 @@ public:
         // ダッシュアニメーション設定
         animVec.push_back((int)AnimTexType::Dash1);
         animVec.push_back((int)AnimTexType::Dash2);
-        animVec.push_back((int)AnimTexType::Dash3);
         spAnim.AddAnimation((int)AnimType::Dash, animVec);
         animVec.clear();
 
@@ -88,7 +88,7 @@ public:
 
     void Update(std::vector<std::vector<MapType>>& map) {
 
-        Vector2<float> movable(0.0f, 0.0f); 
+        Vector2<float> movable(0.0f, 0.0f);
 
         velocityX *= 0.75f;
         if (velocityX < 0.1f && velocityX > -0.1f) {
@@ -111,7 +111,7 @@ public:
             isJump = true;
         }
         // 壁ジャンプ
-        else if(CheckHitKey(KEY_INPUT_SPACE) != 0 && isJump && isWallHit)
+        else if (CheckHitKey(KEY_INPUT_SPACE) != 0 && isJump && isWallHit)
         {
             if (movable.x != 0) {
 
@@ -161,7 +161,7 @@ public:
     // 移動しながら、当たり判定チェック
     void MoveAndCollide(
         const Vector2<float>& movable
-      , std::vector<std::vector<MapType>>& map) {
+        , std::vector<std::vector<MapType>>& map) {
 
         int width = pixelSize;  // キャラの横幅
         int height = pixelSize; // キャラの縦幅
@@ -172,12 +172,12 @@ public:
 
             // 今回の移動先
             float toX = x + movable.x + velocityX;
-            
+
             // 今回判定するべき行を、割り出します。
             int col = -1;
 
             // 右移動
-            if (movable.x > 0) { 
+            if (movable.x > 0) {
                 col = (int)((toX + width - 1) / pixelSize);
             }
             else { // 左移動
@@ -191,15 +191,15 @@ public:
             // 当たり判定チェックしましょう
             bool isHit = false;
             for (int row = top; row <= bottom; ++row) {
-                
+
                 // 配列範囲チェック
                 if (row < 0 || row >= map.size()
-                 || col < 0 || col >= map[0].size()) {
+                    || col < 0 || col >= map[0].size()) {
                     continue;
                 }
                 // 何かに当たった？
                 if (map[row][col] == MapType::FLOOR
-                 || map[row][col] == MapType::WALL) {
+                    || map[row][col] == MapType::WALL) {
                     isHit = true;
                     break; // 当たったらもう用がないので、breakして抜ける
                 }
@@ -259,7 +259,7 @@ public:
                 }
                 // 何かに当たった？
                 if (map[row][col] == MapType::FLOOR
-                 || map[row][col] == MapType::WALL) {
+                    || map[row][col] == MapType::WALL) {
                     isHit = true;
                     break; // 当たったらもう用がないので、breakして抜ける
                 }
@@ -306,14 +306,14 @@ public:
 
             // 配列範囲チェック
             if (row < 0 || row >= map.size()
-             || col < 0 || col >= map[0].size()) {
+                || col < 0 || col >= map[0].size()) {
                 continue;
             }
 
             // 床だったら、床の上に補正してジャンプを終わらせます
             // row : y軸 / col : x軸
             if (map[row][col] == MapType::FLOOR
-             || map[row][col] == MapType::WALL) {
+                || map[row][col] == MapType::WALL) {
                 isJump = false; // ジャンプを終わらせます
                 y = (row - 1) * pixelSize; // 床の上に補正します。
                 velocityY = 0;
@@ -327,4 +327,5 @@ public:
     void Draw() {
         spAnim.Draw(x, y, isDirLeft);
     }
+
 };

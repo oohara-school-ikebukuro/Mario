@@ -149,7 +149,9 @@
   <ItemGroup>
     <ClInclude Include="scripts\GameManager.hpp" />
     <ClInclude Include="scripts\helper\DxLibHelper.h" />
+    <ClInclude Include="scripts\MapType.hpp" />
     <ClInclude Include="scripts\Mario.hpp" />
+    <ClInclude Include="scripts\Nokonoko.hpp" />
     <ClInclude Include="scripts\PlayManager.hpp" />
     <ClInclude Include="scripts\Rect.hpp" />
     <ClInclude Include="scripts\Sprite.hpp" />

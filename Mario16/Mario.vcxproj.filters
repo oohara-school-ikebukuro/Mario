@@ -59,5 +59,11 @@
     <ClInclude Include="scripts\Rect.hpp">
       <Filter>ソース ファイル\sprite</Filter>
     </ClInclude>
+    <ClInclude Include="scripts\Nokonoko.hpp">
+      <Filter>ソース ファイル\game</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\MapType.hpp">
+      <Filter>ソース ファイル\game</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
