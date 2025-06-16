@@ -86,6 +86,7 @@ public:
     float velocityX = 0;  // x軸の力
     float gravity = 0.3f; // 重力
     bool isJump = false;  // ジャンプしてますか？
+    bool isSpace = false;
 
     void Update(std::vector<std::vector<MapType>>& map) {
 
@@ -107,9 +108,15 @@ public:
         }
 
         // スペースキーでジャンプ ジャンプしていないときのみ、ジャンプです
-        if (CheckHitKey(KEY_INPUT_SPACE) != 0 && !isJump) {
+        if (isSpace) {
+            if (!CheckHitKey(KEY_INPUT_SPACE)) {
+                isSpace = false;
+            }
+        }
+        else if (CheckHitKey(KEY_INPUT_SPACE) != 0 && !isJump) {
             velocityY = -7.0f;
             isJump = true;
+            isSpace = true;
         }
         // 壁ジャンプ
         else if(CheckHitKey(KEY_INPUT_SPACE) != 0 && isJump && isWallHit)
@@ -118,6 +125,7 @@ public:
 
                 velocityY = -7.0f; // ジャンプしたときの推進力
                 velocityX = -movable.x * 5;
+                isSpace = true;
             }
         }
 
@@ -329,6 +337,8 @@ public:
         spAnim.Draw(x, y, isDirLeft);
     }
 
+    bool isDeath = false; // 死亡したか？
+
     // ノコノコと当たったか？
     void HitEnemy(Nokonoko& nokonoko) {
 
@@ -351,9 +361,15 @@ public:
             m_lx < n_rx &&
             m_ry > n_ly) {
 
-            velocityY = -10.0f;
-
-            nokonoko.Hit();
+            // velocityY が、0以上の時は落下している
+            // 落下中ではないときに、
+            if (velocityY <= 0) {
+                isDeath = true;
+            }
+            else {
+                velocityY = -10.0f;
+                nokonoko.Hit();
+            }
         }
     }
 };

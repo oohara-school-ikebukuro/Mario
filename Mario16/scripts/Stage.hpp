@@ -123,6 +123,12 @@ public:
     }
 
     void Update(){
+
+        // マリオが死んだら、何もしない
+        if (mario.isDeath) {
+            return;
+        }
+
         mario.Update(map);
 
         //          ↓ ノコノコ
@@ -172,6 +178,11 @@ public:
         //          ↓ ノコノコ
         for (auto& nokonoko : nokonokos) {
             nokonoko.Draw();
+        }
+
+        // マリオが死んだら、ゲームオーバー
+        if (mario.isDeath) {
+            DrawString(0, 500, "GAME OVER!", GetColor(255, 255, 255));
         }
     }
 

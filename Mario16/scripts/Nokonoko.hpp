@@ -14,19 +14,20 @@ class Nokonoko {
           Idle
         , Dash1, Dash2
         , Jump
+        , Hikikomori
     };
 
     enum class AnimType {
           Idle
         , Dash
         , Jump
+        , Hikikomori
     };
 
 public:
 
     int pixelSize;   // 1マスのサイズ
     float x, y;      // 座標
-    bool isDirLeft;  // 左向いてますか？
 
     bool isWallHit = false;// 壁に当たっているか
 
@@ -56,7 +57,10 @@ public:
         textures.insert({ (int)AnimTexType::Dash2,{ 240 , 0 , 16 , 24 } });
 
         // ジャンプ画像の切り出し
-        textures.insert({ (int)AnimTexType::Jump,{210,0,16,24} });
+        textures.insert({ (int)AnimTexType::Jump,{ 210 , 0 , 16 , 24 } });
+
+        // 引きこもり画像の切り出し
+        textures.insert({ (int)AnimTexType::Hikikomori,{ 360 , 4 , 16 , 16 } });
 
         // 画像のロード
         spAnim.Load("./resource/enemies.png", textures);
@@ -78,6 +82,11 @@ public:
         // ジャンプアニメーション
         animVec.push_back((int)AnimTexType::Jump);
         spAnim.AddAnimation((int)AnimType::Jump, animVec);
+        animVec.clear();
+
+        // ひきこもりアニメーション
+        animVec.push_back((int)AnimTexType::Hikikomori);
+        spAnim.AddAnimation((int)AnimType::Hikikomori, animVec);
         animVec.clear();
     }
 
@@ -113,7 +122,10 @@ public:
         // 最終アニメーションを決定します。
         AnimType newType = AnimType::Idle;
 
-        if (isJump) {
+        if (isHit) {
+            newType = AnimType::Hikikomori;
+        }
+        else if (isJump) {
             newType = AnimType::Jump;
         }
         else if (movable.x != 0) {
@@ -299,4 +311,10 @@ public:
         spAnim.Draw(x, y, isDirLeft);
     }
 
+    bool isHit = false;
+
+    // 当たったら
+    void Hit() {
+        isHit = true;
+    }
 };
